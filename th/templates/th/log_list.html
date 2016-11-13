@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>
+			This is title
+		</title>
+	</head>
+
+	<body>
+		This is content
+		<div>
+			{% for log in logs %}
+				<p>
+				{{ log.time }}
+				{{ log.temp }}
+				{{ log.humi }}
+				</p>
+			{% endfor %}
+		</div>
+	</body>
+</html>
