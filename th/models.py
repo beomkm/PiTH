@@ -8,7 +8,6 @@ class Log(models.Model):
 	temp = models.IntegerField()
 	humi = models.IntegerField()
 	
-
 	def __str__(self):
 		return (self.time[:4]+'/'+self.time[4:6]+'/'+
 			self.time[6:8]+' '+self.time[8:10]+':'+
