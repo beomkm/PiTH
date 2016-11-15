@@ -6,34 +6,70 @@
 		</title>
 		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 		<script type="text/javascript">
-			google.charts.load('current', {'packages':['corechart']});
+			google.charts.load('current', {'packages':['line']});
 			google.charts.setOnLoadCallback(drawChart);
 
-			function drawChart() {
+			var range = 10; //minute
 
-				var dataArray = [["Time", "Temp", "Humi"]];
+			function drawChart()
+			{
+				var dataArray = [["Time", "Humi", "Temp"]];
 
-				var i = 0;
+				var initTime = 0;
+
 				{% for log in logs %}
 					var data = [];
-					data[0] = {{ log.time }};
-					data[1] = {{ log.temp }};
-					data[2] = {{ log.humi }};
-					dataArray.push(data);	
+					var time = charToDate(({{ log.time }}).toString());
+					if(initTime == 0) {
+						initTime = time.getTime();
+					}
+
+					var diff = (initTime - time.getTime())/1000;
+					if(diff < range*60) {
+						console.log(diff);
+						data[0] = -diff;
+						data[1] = {{ log.humi }};
+						data[2] = {{ log.temp }};
+						dataArray.push(data);
+					}
 				{% endfor %}
-				console.log(dataArray);
 
 				var dataTable = google.visualization.arrayToDataTable(dataArray);
 
 				var options = {
 					title: "Temperature & Humidity",
-					legend: { position: "bottom" }
+					legend: { position: "bottom" },
+					hAxis: {
+						title: "interval(sec)",
+						viewWindowMode: "explicit",
+						viewWindow: {
+							min: -range*60,
+							max: 0,
+						}
+					}
 				};
 
-				var chart = new google.visualization.LineChart(document.getElementById("chart"));
+				var chart = new google.charts.Line(document.getElementById("chart"));
 
 				chart.draw(dataTable, options);
 			}
+
+
+			function charToDate(str)
+			{	
+				var year = str.slice(0, 4);
+				var month = str.slice(4, 6);
+				var date = str.slice(6, 8);
+				var hour = str.slice(8, 10);
+				var min = str.slice(10, 12);
+				var sec = str.slice(12, 14);
+
+				var d = new Date(year, month, date, hour, min, sec);
+				return d;
+				
+			}
+
+
 		</script>
 	</head>
 
