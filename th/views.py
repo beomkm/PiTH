@@ -8,7 +8,6 @@ def log_list(request):
 	return render(request, 'th/log_list.html', {'logs':logs})
 
 
-
 def register(request):
 	time = request.GET.get('time')
 	temp = request.GET.get('temp')
@@ -17,3 +16,7 @@ def register(request):
 			time=time, temp=int(temp), humi=int(humi))
 	return HttpResponse("Registerd "+time)
 
+
+def clear(request):
+	Log.objects.all().delete()
+	return HttpResponse("All data was deleted.")
