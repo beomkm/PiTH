@@ -51,7 +51,8 @@
 
 				var chart = new google.charts.Line(document.getElementById("chart"));
 
-				chart.draw(dataTable, options);
+				if(initTime != 0)
+					chart.draw(dataTable, options);
 			}
 
 
