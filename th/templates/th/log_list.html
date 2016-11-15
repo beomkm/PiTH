@@ -4,12 +4,43 @@
 		<title>
 			This is title
 		</title>
+		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+		<script type="text/javascript">
+			google.charts.load('current', {'packages':['corechart']});
+			google.charts.setOnLoadCallback(drawChart);
 
+			function drawChart() {
+
+				var dataArray = [["Time", "Temp", "Humi"]];
+
+				var i = 0;
+				{% for log in logs %}
+					var data = [];
+					data[0] = {{ log.time }};
+					data[1] = {{ log.temp }};
+					data[2] = {{ log.humi }};
+					dataArray.push(data);	
+				{% endfor %}
+				console.log(dataArray);
+
+				var dataTable = google.visualization.arrayToDataTable(dataArray);
+
+				var options = {
+					title: "Temperature & Humidity",
+					legend: { position: "bottom" }
+				};
+
+				var chart = new google.visualization.LineChart(document.getElementById("chart"));
+
+				chart.draw(dataTable, options);
+			}
+		</script>
 	</head>
 
 	<body>
 
 		This is content
+		<div id="chart" style="width: 500px; height: 300px"></div>
 		<div>
 			{% for log in logs %}
 				<p>
