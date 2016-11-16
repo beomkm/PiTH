@@ -14,7 +14,7 @@ def register(request):
 	humi = request.GET.get('humi')
 	Log.objects.create(
 			time=time, temp=int(temp), humi=int(humi))
-	return HttpResponse("Registerd "+time)
+	return HttpResponse("Registered "+time)
 
 
 def clear(request):
