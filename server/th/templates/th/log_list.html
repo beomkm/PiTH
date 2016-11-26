@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html>
 	<head>
+
+
+		<style>
+			table {
+				border-collapse: collapse;
+			}
+			th, td {
+				text-align: center;
+				border: 1px solid black;
+			}
+		</style>
+
 		<title>
 			Sensor charts
 		</title>
@@ -13,7 +25,7 @@
 
 			function drawChart()
 			{
-				var dataArray = [["Time", "Humi", "Temp"]];
+				var dataArray = [["Time", "Humidity", "Temperature"]];
 
 				var initTime = 0;
 
@@ -26,8 +38,7 @@
 
 					var diff = (initTime - time.getTime())/1000;
 					if(diff < range*60) {
-						console.log(diff);
-						data[0] = -diff;
+						data[0] = time.getHours() + ":" +time.getMinutes();
 						data[1] = {{ log.humi }};
 						data[2] = {{ log.temp }};
 						dataArray.push(data);
@@ -76,15 +87,22 @@
 
 	<body>
 
-		<div id="chart" style="width: 500px; height: 300px"></div>
+		<div id="chart" style="width: 600px; height: 300px"></div>
 		<div>
+			<table>
+				<tr>
+					<th>Timestamp</th>
+					<th>Temperature</th>
+					<th>Humidity</th>
+				</tr>
 			{% for log in logs %}
-				<p>
-				{{ log.time }}
-				{{ log.temp }}
-				{{ log.humi }}
-				</p>
+				<tr>
+					<td>{{ log.time }}</td>
+					<td>{{ log.temp }}</td>
+					<td>{{ log.humi }}</td>
+				</tr>
 			{% endfor %}
+			</table>
 		</div>
 	</body>
 </html>

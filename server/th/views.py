@@ -4,7 +4,7 @@ from django.http import HttpResponse
 
 # Create your views here.
 def log_list(request):
-	logs = Log.objects.filter().order_by('-time')
+	logs = Log.objects.filter().order_by('time')
 	return render(request, 'th/log_list.html', {'logs':logs})
 
 
