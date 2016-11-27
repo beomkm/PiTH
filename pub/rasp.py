@@ -1,7 +1,11 @@
 import RPi.GPIO as GPIO
+import dht11
 import time
+import datetime
 import threading
 
+# initialize GPIO
+GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.cleanup()
 
@@ -30,7 +34,6 @@ seg = [[1,4,3,8,7,6],[3,8],[4,3,9,6,7],
 	[4,3,9,8,7],[1,9,3,8],[4,1,9,8,7],
 	[4,1,9,8,7,6], [1,4,3,8],
 	[4,1,3,9,6,7,8],[1,4,3,9,8,7]]
-
 
 
 def printNum(digit, num):
@@ -62,17 +65,29 @@ def handler():
 		printNum(1, num%10)
 		time.sleep(0.01)
 
+
 th = threading.Thread(target=handler)
 th.start()
 
 
+	
+# read data using pin 17
+instance = dht11.DHT11(pin = 17)
 
 try:
 	while True:
-		num = input()
+		result = instance.read()
+		if result.is_valid():
+			print("Last valid input: " + str(datetime.datetime.now()))
+			print("Temperature: %d C" % result.temperature)
+			num = result.temperature
+			print("Humidity: %d %%" % result.humidity)
+
+		time.sleep(0.5)
+
 except KeyboardInterrupt:
 	tFlag = 0
 	th.join()
 	GPIO.cleanup()
 
-	
+
