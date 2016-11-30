@@ -3,6 +3,7 @@ import dht11
 import time
 import datetime
 import threading
+import requests
 
 # initialize GPIO
 GPIO.setwarnings(False)
@@ -18,6 +19,9 @@ GPIO.setup(12, GPIO.OUT) #6
 GPIO.setup(16, GPIO.OUT) #9
 GPIO.setup(20, GPIO.OUT) #7
 GPIO.setup(21, GPIO.OUT) #8
+
+instance = dht11.DHT11(pin = 17)
+
 
 map = {}
 map[1] = 13
@@ -69,21 +73,34 @@ def handler():
 th = threading.Thread(target=handler)
 th.start()
 
-
+def getTimestamp():
+	c = datetime.datetime.now()
+	year = "%04d" % c.year
+	month = "%02d" % c.month
+	day = "%02d" % c.day
+	hour = "%02d" % c.hour
+	minute = "%02d" % c.minute
+	second = "%02d" % c.second
+	return year+month+day+hour+minute+second
 	
-# read data using pin 17
-instance = dht11.DHT11(pin = 17)
+	
+def sendData(time, temp, humi):
+	URL = "http://128.199.254.45:8000/register"
+	params = {'time': time, 'temp': temp, 'humi': humi}
+	requests.get(URL, params=params)
+	
 
 try:
 	while True:
 		result = instance.read()
 		if result.is_valid():
-			print("Last valid input: " + str(datetime.datetime.now()))
+			print("Last valid input: " + getTimestamp())
 			print("Temperature: %d C" % result.temperature)
 			num = result.temperature
 			print("Humidity: %d %%" % result.humidity)
+			sendData(getTimestamp(), result.temperature, result.humidity)
 
-		time.sleep(0.5)
+		time.sleep(10)
 
 except KeyboardInterrupt:
 	tFlag = 0
