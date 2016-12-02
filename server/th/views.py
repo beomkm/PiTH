@@ -4,8 +4,9 @@ from django.http import HttpResponse
 
 # Create your views here.
 def log_list(request):
-	logs = Log.objects.filter().order_by('time')
-	return render(request, 'th/log_list.html', {'logs':logs})
+	logs = Log.objects.filter().order_by('-time')[:10]
+	logs_graph = reversed(logs)
+	return render(request, 'th/log_list.html', {'logs':logs, 'logs_graph':logs_graph})
 
 
 def register(request):

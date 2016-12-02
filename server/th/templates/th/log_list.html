@@ -19,28 +19,20 @@
 			google.charts.load('current', {'packages':['line']});
 			google.charts.setOnLoadCallback(drawChart);
 
-			var range = 10; //minute
-
 			function drawChart()
 			{
 				var dataArray = [["Time", "Humidity", "Temperature"]];
 
-				var initTime = 0;
 
-				{% for log in logs %}
+				{% for log in logs_graph %}
 					var data = [];
 					var time = charToDate(({{ log.time }}).toString());
-					if(initTime == 0) {
-						initTime = time.getTime();
-					}
 
-					var diff = (initTime - time.getTime())/1000;
-					if(diff < range*60) {
-						data[0] = time.getHours() + ":" +time.getMinutes();
-						data[1] = {{ log.humi }};
-						data[2] = {{ log.temp }};
-						dataArray.push(data);
-					}
+					data[0] = time.getHours() + ":" +time.getMinutes();
+					data[1] = {{ log.humi }};
+					data[2] = {{ log.temp }};
+					dataArray.push(data);
+
 				{% endfor %}
 
 				var dataTable = google.visualization.arrayToDataTable(dataArray);
@@ -48,20 +40,11 @@
 				var options = {
 					title: "Temperature & Humidity",
 					legend: { position: "bottom" },
-					hAxis: {
-						title: "interval(sec)",
-						viewWindowMode: "explicit",
-						viewWindow: {
-							min: -range*60,
-							max: 0,
-						}
-					}
 				};
 
 				var chart = new google.charts.Line(document.getElementById("chart"));
 
-				if(initTime != 0)
-					chart.draw(dataTable, options);
+				chart.draw(dataTable, options);
 			}
 
 
